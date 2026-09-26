@@ -1,9 +1,9 @@
 #include "sjf.hpp"
 
-#include <algorithm>
+#include "desempate.hpp"
 
 Processo *SJF::selecionarProximo(std::vector<Processo *> &fila_prontos,
-                                 Processo *atual, int tempo_atual) {
+                                 Processo *atual, int /*tempo_atual*/) {
   if (atual != nullptr) {
     return atual;
   }
@@ -12,5 +12,7 @@ Processo *SJF::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return nullptr;
   }
 
-  return std::ranges::min(fila_prontos, {}, &Processo::duracao);
+  auto empatados =
+      filtrar_por_extremo(fila_prontos, &Processo::duracao, Extremo::Minimo);
+  return desempatar(empatados, atual);
 }

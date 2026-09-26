@@ -1,23 +1,19 @@
 #include "priop.hpp"
 
-#include <algorithm>
+#include "desempate.hpp"
 
 Processo *PRIOp::selecionarProximo(std::vector<Processo *> &fila_prontos,
-                                   Processo *atual, int tempo_atual) {
-  if (fila_prontos.empty()) {
-    return atual;
+                                   Processo *atual, int /*tempo_atual*/) {
+  std::vector<Processo *> candidatos = fila_prontos;
+  if (atual != nullptr) {
+    candidatos.push_back(atual);
   }
 
-  Processo *maior_prioridade =
-      std::ranges::max(fila_prontos, {}, &Processo::prioridade);
-
-  if (atual == nullptr) {
-    return maior_prioridade;
+  if (candidatos.empty()) {
+    return nullptr;
   }
 
-  if (maior_prioridade->prioridade > atual->prioridade) {
-    return maior_prioridade;
-  } 
-
-  return atual;
+  auto empatados =
+      filtrar_por_extremo(candidatos, &Processo::prioridade, Extremo::Maximo);
+  return desempatar(empatados, atual);
 }

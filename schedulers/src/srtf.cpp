@@ -1,23 +1,19 @@
 #include "srtf.hpp"
 
-#include <algorithm>
+#include "desempate.hpp"
 
 Processo *SRTF::selecionarProximo(std::vector<Processo *> &fila_prontos,
-                                  Processo *atual, int tempo_atual) {
-  if (fila_prontos.empty()) {
-    return atual;
+                                  Processo *atual, int /*tempo_atual*/) {
+  std::vector<Processo *> candidatos = fila_prontos;
+  if (atual != nullptr) {
+    candidatos.push_back(atual);
   }
 
-  Processo *melhor_fila =
-      std::ranges::min(fila_prontos, {}, &Processo::tempo_restante);
-
-  if (atual == nullptr) {
-    return melhor_fila;
+  if (candidatos.empty()) {
+    return nullptr;
   }
 
-  if (melhor_fila->tempo_restante < atual->tempo_restante) {
-    return melhor_fila;
-  }
-
-  return atual;
+  auto empatados = filtrar_por_extremo(candidatos, &Processo::tempo_restante,
+                                       Extremo::Minimo);
+  return desempatar(empatados, atual);
 }

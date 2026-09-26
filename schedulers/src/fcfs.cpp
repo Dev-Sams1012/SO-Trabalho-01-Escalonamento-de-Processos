@@ -1,9 +1,9 @@
 #include "fcfs.hpp"
 
-#include <algorithm>
+#include "desempate.hpp"
 
 Processo *FCFS::selecionarProximo(std::vector<Processo *> &fila_prontos,
-                                  Processo *atual, int tempo_atual) {
+                                  Processo *atual, int /*tempo_atual*/) {
   if (atual != nullptr) {
     return atual;
   }
@@ -12,5 +12,7 @@ Processo *FCFS::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return nullptr;
   }
 
-  return std::ranges::min(fila_prontos, {}, &Processo::tempo_chegada);
+  auto empatados = filtrar_por_extremo(fila_prontos, &Processo::tempo_chegada,
+                                       Extremo::Minimo);
+  return desempatar(empatados, atual);
 }

@@ -1,9 +1,9 @@
 #include "prioc.hpp"
 
-#include <algorithm>
+#include "desempate.hpp"
 
 Processo *PRIOc::selecionarProximo(std::vector<Processo *> &fila_prontos,
-                                   Processo *atual, int tempo_atual) {
+                                   Processo *atual, int /*tempo_atual*/) {
   if (atual != nullptr) {
     return atual;
   }
@@ -12,5 +12,7 @@ Processo *PRIOc::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return nullptr;
   }
 
-  return std::ranges::max(fila_prontos, {}, &Processo::prioridade);
+  auto empatados =
+      filtrar_por_extremo(fila_prontos, &Processo::prioridade, Extremo::Maximo);
+  return desempatar(empatados, atual);
 }
