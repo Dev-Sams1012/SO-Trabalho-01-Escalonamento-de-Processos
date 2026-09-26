@@ -1,5 +1,9 @@
 add_library(schedulers STATIC
     src/fcfs.cpp
+    src/sjf.cpp
+    src/srtf.cpp
+    src/prioc.cpp
+    src/priop.cpp
 )
 
 target_include_directories(schedulers PUBLIC
