@@ -1,4 +1,4 @@
-#include "../include/simulador.hpp"
+#include "simulador.hpp"
 
 Simulador::Simulador(std::vector<Processo> processos,
                      std::unique_ptr<IEscalonador> escalonador)

@@ -1,11 +1,11 @@
 #pragma once
 
+#include "escalonador.hpp"
+#include "processo.hpp"
+
 #include <functional>
 #include <memory>
 #include <vector>
-
-#include "escalonador.hpp"
-#include "processo.hpp"
 
 struct RegistroTick {
   int tempo;

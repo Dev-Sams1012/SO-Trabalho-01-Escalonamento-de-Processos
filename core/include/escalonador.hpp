@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "processo.hpp"
+
+#include <string_view>
+#include <vector>
 
 class IEscalonador {
 public:
@@ -15,5 +15,5 @@ public:
   virtual void onTick(std::vector<Processo *> & /*fila_prontos*/,
                       int /*tempo_atual*/) {}
 
-  virtual std::string nome() const = 0;
+  virtual std::string_view nome() const = 0;
 };
