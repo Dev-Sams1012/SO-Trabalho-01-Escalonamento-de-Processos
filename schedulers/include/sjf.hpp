@@ -3,6 +3,7 @@
 #include "escalonador.hpp"
 
 class SJF : public IEscalonador {
+public:
   Processo *selecionarProximo(std::vector<Processo *> &fila_prontos,
                               Processo *atual, int tempo_atual) override;
 

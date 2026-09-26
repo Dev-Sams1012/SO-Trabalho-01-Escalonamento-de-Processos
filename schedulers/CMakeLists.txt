@@ -4,6 +4,9 @@ add_library(schedulers STATIC
     src/srtf.cpp
     src/prioc.cpp
     src/priop.cpp
+    src/round_robin.cpp
+    src/round_robin_aging.cpp
+    src/scheduler_factory.cpp
 )
 
 target_include_directories(schedulers PUBLIC
