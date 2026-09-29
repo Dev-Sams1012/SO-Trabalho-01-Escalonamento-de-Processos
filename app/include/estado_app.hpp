@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include "config.hpp"
 #include "processo.hpp"
@@ -16,9 +17,7 @@ struct EstadoApp {
   std::vector<Processo> processos;
   Config config{2, 1};              // quantum, aging
   int algoritmo_selecionado = 0;    // indice em kEscalonadores
-
-  // Contador para gerar o proximo id de processo (P1, P2, ...).
-  // Nao reaproveitamos ids de processos removidos, para nao confundir
-  // o usuario ao ler o diagrama depois.
   int proximo_id = 1;
+
+  std::vector<std::string> erros_carregamento;
 };

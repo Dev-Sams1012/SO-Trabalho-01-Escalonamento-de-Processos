@@ -20,6 +20,13 @@ FetchContent_Declare(
   GIT_SHALLOW    TRUE
 )
 
+FetchContent_Declare(
+  tinyfiledialogs
+  GIT_REPOSITORY https://github.com/native-toolkit/tinyfiledialogs.git
+  GIT_TAG        master
+  GIT_SHALLOW    TRUE
+)
+
 FetchContent_MakeAvailable(glfw imgui)
 
 find_package(OpenGL REQUIRED)
@@ -36,12 +43,21 @@ target_include_directories(imgui_lib PUBLIC
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
-target_link_libraries(imgui_lib PUBLIC glfw OpenGL::GL)
+
+add_library(tinyfd_lib STATIC
+    ${tinyfiledialogs_SOURCE_DIR}/tinyfiledialogs.c
+)
+target_include_directories(tinyfd_lib PUBLIC
+    ${tinyfiledialogs_SOURCE_DIR}
+)
+
+target_link_libraries(escalonador_gui PRIVATE imgui_lib scheduler_io tinyfd_lib)
 
 # --- Executavel da interface grafica ---
 add_executable(escalonador_gui
     src/main.cpp
     src/ui_dados.cpp
+    src/carregamento.cpp
 )
 target_include_directories(escalonador_gui PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "carregamento.hpp"
 #include "entrada.hpp"
 #include "imgui.h"
 #include "processo.hpp"
@@ -12,6 +13,12 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
   // --- Configuracao (quantum / aging) ---
   ImGui::SeparatorText("Configuracao");
+  if (ImGui::Button("Carregar config de arquivo...")) {
+  carregar_config_de_arquivo(estado);
+  }
+
+  ImGui::SetNextItemWidth(120);
+  ImGui::InputInt("Quantum", &estado.config.quantum);
   ImGui::SetNextItemWidth(120);
   ImGui::InputInt("Quantum", &estado.config.quantum);
   if (estado.config.quantum < 1) estado.config.quantum = 1;
@@ -48,6 +55,11 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
   // --- Tabela de processos ---
   ImGui::SeparatorText("Processos");
+
+
+  if (ImGui::Button("Carregar processos de arquivo...")) {
+    carregar_processos_de_arquivo(estado);
+  }
 
   if (ImGui::Button("Adicionar processo")) {
     estado.processos.push_back(
@@ -116,6 +128,18 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
   if (estado.processos.empty()) {
     ImGui::TextDisabled("Nenhum processo. Clique em \"Adicionar processo\".");
+  }
+
+  if (!estado.erros_carregamento.empty()) {
+    ImGui::SeparatorText("Erros ao carregar arquivo");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 100, 100, 255));
+    for (const auto &erro : estado.erros_carregamento) {
+      ImGui::TextWrapped("%s", erro.c_str());
+    }
+    ImGui::PopStyleColor();
+    if (ImGui::Button("Fechar mensagens")) {
+      estado.erros_carregamento.clear();
+    }
   }
 
   ImGui::End();
