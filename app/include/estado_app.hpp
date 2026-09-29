@@ -1,5 +1,8 @@
 #pragma once
 
+#include <optional>
+
+#include "simulador.hpp"
 #include <vector>
 #include <string>
 
