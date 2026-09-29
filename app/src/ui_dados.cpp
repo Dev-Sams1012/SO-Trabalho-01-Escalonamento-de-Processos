@@ -5,6 +5,7 @@
 
 #include "carregamento.hpp"
 #include "entrada.hpp"
+#include "execucao.hpp"
 #include "imgui.h"
 #include "processo.hpp"
 
@@ -13,19 +14,23 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
   // --- Configuracao (quantum / aging) ---
   ImGui::SeparatorText("Configuracao");
+
   if (ImGui::Button("Carregar config de arquivo...")) {
-  carregar_config_de_arquivo(estado);
+    carregar_config_de_arquivo(estado);
+    estado.ultimo_resultado.reset();
   }
 
   ImGui::SetNextItemWidth(120);
-  ImGui::InputInt("Quantum", &estado.config.quantum);
-  ImGui::SetNextItemWidth(120);
-  ImGui::InputInt("Quantum", &estado.config.quantum);
+  if (ImGui::InputInt("Quantum", &estado.config.quantum)) {
+    estado.ultimo_resultado.reset();
+  }
   if (estado.config.quantum < 1) estado.config.quantum = 1;
 
   ImGui::SameLine();
   ImGui::SetNextItemWidth(120);
-  ImGui::InputInt("Aging", &estado.config.aging);
+  if (ImGui::InputInt("Aging", &estado.config.aging)) {
+    estado.ultimo_resultado.reset();
+  }
   if (estado.config.aging < 0) estado.config.aging = 0;
 
   // --- Selecao do algoritmo ---
@@ -45,6 +50,7 @@ void desenhar_painel_dados(EstadoApp &estado) {
       const bool selecionado = (i == estado.algoritmo_selecionado);
       if (ImGui::Selectable(nomes_algoritmos[i].c_str(), selecionado)) {
         estado.algoritmo_selecionado = i;
+        estado.ultimo_resultado.reset();
       }
       if (selecionado) {
         ImGui::SetItemDefaultFocus();
@@ -56,19 +62,21 @@ void desenhar_painel_dados(EstadoApp &estado) {
   // --- Tabela de processos ---
   ImGui::SeparatorText("Processos");
 
-
   if (ImGui::Button("Carregar processos de arquivo...")) {
     carregar_processos_de_arquivo(estado);
+    estado.ultimo_resultado.reset();
   }
-
+  ImGui::SameLine();
   if (ImGui::Button("Adicionar processo")) {
     estado.processos.push_back(
         criar_processo(estado.proximo_id++, /*chegada=*/0, /*duracao=*/1,
                        /*prioridade=*/1));
+    estado.ultimo_resultado.reset();
   }
   ImGui::SameLine();
   if (ImGui::Button("Limpar tudo")) {
     estado.processos.clear();
+    estado.ultimo_resultado.reset();
   }
 
   const ImGuiTableFlags flags = ImGuiTableFlags_Borders |
@@ -95,25 +103,32 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
       ImGui::TableSetColumnIndex(1);
       ImGui::SetNextItemWidth(-1);
-      ImGui::InputInt("##chegada", &p.tempo_chegada);
+      if (ImGui::InputInt("##chegada", &p.tempo_chegada)) {
+        estado.ultimo_resultado.reset();
+      }
       if (p.tempo_chegada < 0) p.tempo_chegada = 0;
 
       ImGui::TableSetColumnIndex(2);
       ImGui::SetNextItemWidth(-1);
-      ImGui::InputInt("##duracao", &p.duracao);
+      if (ImGui::InputInt("##duracao", &p.duracao)) {
+        estado.ultimo_resultado.reset();
+      }
       if (p.duracao < 1) p.duracao = 1;
       p.tempo_restante = p.duracao;
       p.estado = EstadoProcesso::Novo;
 
       ImGui::TableSetColumnIndex(3);
       ImGui::SetNextItemWidth(-1);
-      ImGui::InputInt("##prioridade", &p.prioridade);
+      if (ImGui::InputInt("##prioridade", &p.prioridade)) {
+        estado.ultimo_resultado.reset();
+      }
       if (p.prioridade < 1) p.prioridade = 1;
       p.prioridade_dinamica = p.prioridade;
 
       ImGui::TableSetColumnIndex(4);
       if (ImGui::Button("Remover")) {
         indice_para_remover = i;
+        estado.ultimo_resultado.reset();
       }
 
       ImGui::PopID();
@@ -130,6 +145,7 @@ void desenhar_painel_dados(EstadoApp &estado) {
     ImGui::TextDisabled("Nenhum processo. Clique em \"Adicionar processo\".");
   }
 
+  // --- Erros de carregamento de arquivo ---
   if (!estado.erros_carregamento.empty()) {
     ImGui::SeparatorText("Erros ao carregar arquivo");
     ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 100, 100, 255));
@@ -140,6 +156,21 @@ void desenhar_painel_dados(EstadoApp &estado) {
     if (ImGui::Button("Fechar mensagens")) {
       estado.erros_carregamento.clear();
     }
+  }
+
+  // --- Iniciar simulacao ---
+  ImGui::Separator();
+
+  const bool pode_rodar = pode_simular(estado);
+  if (!pode_rodar) {
+    ImGui::BeginDisabled();
+  }
+  if (ImGui::Button("Iniciar simulacao", ImVec2(-1, 40))) {
+    executar_simulacao(estado);
+  }
+  if (!pode_rodar) {
+    ImGui::EndDisabled();
+    ImGui::TextDisabled("Adicione ao menos um processo para simular.");
   }
 
   ImGui::End();

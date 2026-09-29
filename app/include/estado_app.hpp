@@ -23,4 +23,5 @@ struct EstadoApp {
   int proximo_id = 1;
 
   std::vector<std::string> erros_carregamento;
+  std::optional<ResultadoSimulacao> ultimo_resultado;
 };
