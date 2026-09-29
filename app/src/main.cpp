@@ -12,6 +12,7 @@
 #include "estado_app.hpp"
 #include "ui_dados.hpp"
 #include "ui_resultados.hpp"
+#include "ui_gantt.hpp"
 
 static void erro_glfw(int codigo, const char *descricao) {
   std::fprintf(stderr, "GLFW erro %d: %s\n", codigo, descricao);
@@ -58,6 +59,7 @@ int main() {
 
     desenhar_painel_dados(estado);
     desenhar_painel_resultados(estado);
+    desenhar_painel_gantt(estado);
 
     ImGui::Render();
     int largura, altura;

@@ -62,6 +62,7 @@ add_executable(escalonador_gui
     src/carregamento.cpp
     src/execucao.cpp
     src/ui_resultados.cpp
+    src/ui_gantt.cpp
 )
 target_include_directories(escalonador_gui PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
