@@ -41,10 +41,9 @@ target_link_libraries(imgui_lib PUBLIC glfw OpenGL::GL)
 # --- Executavel da interface grafica ---
 add_executable(escalonador_gui
     src/main.cpp
+    src/ui_dados.cpp
+)
+target_include_directories(escalonador_gui PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(escalonador_gui PRIVATE imgui_lib scheduler_io)
-
-if(WIN32 AND MSVC)
-  set_target_properties(escalonador_gui PROPERTIES
-      LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-endif()

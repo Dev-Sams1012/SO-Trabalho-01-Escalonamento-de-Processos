@@ -1,7 +1,6 @@
 // Interface grafica do simulador de escalonamento (Dear ImGui + GLFW + OpenGL3).
 //
-// Fase 0: apenas abre a janela e confirma que o backend esta linkado.
-// As proximas fases adicionam entrada de dados, resultados e animacao.
+// Fase 1: entrada de dados (tabela de processos, quantum/aging, algoritmo).
 
 #include <cstdio>
 
@@ -10,7 +9,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "scheduler_factory.hpp"
+#include "estado_app.hpp"
+#include "ui_dados.hpp"
 
 static void erro_glfw(int codigo, const char *descricao) {
   std::fprintf(stderr, "GLFW erro %d: %s\n", codigo, descricao);
@@ -38,13 +38,15 @@ int main() {
     return 1;
   }
   glfwMakeContextCurrent(janela);
-  glfwSwapInterval(1);  // vsync
+  glfwSwapInterval(1);
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
   ImGui_ImplGlfw_InitForOpenGL(janela, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
+
+  EstadoApp estado;
 
   while (!glfwWindowShouldClose(janela)) {
     glfwPollEvents();
@@ -53,10 +55,7 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Simulador");
-    ImGui::Text("Backend carregado: %d algoritmos disponiveis.",
-                static_cast<int>(kEscalonadores.size()));
-    ImGui::End();
+    desenhar_painel_dados(estado);
 
     ImGui::Render();
     int largura, altura;
