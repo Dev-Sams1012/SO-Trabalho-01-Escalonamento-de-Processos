@@ -10,6 +10,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "estado_app.hpp"
+#include "execucao.hpp"
 #include "ui_dados.hpp"
 #include "ui_resultados.hpp"
 #include "ui_gantt.hpp"
@@ -57,9 +58,29 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    desenhar_painel_dados(estado);
-    desenhar_painel_resultados(estado);
-    desenhar_painel_gantt(estado);
+    if (estado.tela == EstadoApp::Tela::Simulacao &&
+        !estado.simulacao_pausada && estado.simulador &&
+        !estado.simulador->concluido()) {
+      estado.acumulador_tick += ImGui::GetIO().DeltaTime;
+      if (estado.acumulador_tick >= 0.45f) {
+        estado.acumulador_tick -= 0.45f;
+        avancar_simulacao(estado);
+      }
+    }
+
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Always);
+    switch (estado.tela) {
+    case EstadoApp::Tela::Entrada:
+      desenhar_painel_dados(estado);
+      break;
+    case EstadoApp::Tela::Simulacao:
+      desenhar_painel_gantt(estado);
+      break;
+    case EstadoApp::Tela::Resultados:
+      desenhar_painel_resultados(estado);
+      break;
+    }
 
     ImGui::Render();
     int largura, altura;

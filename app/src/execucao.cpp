@@ -6,7 +6,7 @@ bool pode_simular(const EstadoApp &estado) {
   return !estado.processos.empty();
 }
 
-void executar_simulacao(EstadoApp &estado) {
+void iniciar_simulacao(EstadoApp &estado) {
   if (!pode_simular(estado)) {
     return;
   }
@@ -14,9 +14,20 @@ void executar_simulacao(EstadoApp &estado) {
   const TipoEscalonador tipo = kEscalonadores[estado.algoritmo_selecionado];
   auto escalonador = criar_escalonador(tipo, estado.config);
 
-  // Simulador consome (move) os processos e o escalonador — por isso
-  // passamos uma COPIA de estado.processos, para que a tabela de
-  // entrada (Fase 1) continue intacta depois de rodar.
-  Simulador sim(estado.processos, std::move(escalonador));
-  estado.ultimo_resultado = sim.executar();
+  estado.simulador = std::make_unique<Simulador>(estado.processos,
+                                                std::move(escalonador));
+  estado.ultimo_resultado = estado.simulador->resultado();
+  estado.acumulador_tick = 0.0f;
+  estado.simulacao_pausada = false;
+  estado.tela = EstadoApp::Tela::Simulacao;
+}
+
+bool avancar_simulacao(EstadoApp &estado) {
+  if (!estado.simulador) {
+    return true;
+  }
+
+  const bool concluida = estado.simulador->avancar_tick();
+  estado.ultimo_resultado = estado.simulador->resultado();
+  return concluida;
 }

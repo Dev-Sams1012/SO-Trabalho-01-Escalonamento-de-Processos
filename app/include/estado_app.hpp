@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <memory>
 
 #include "simulador.hpp"
 #include <vector>
@@ -24,4 +25,8 @@ struct EstadoApp {
 
   std::vector<std::string> erros_carregamento;
   std::optional<ResultadoSimulacao> ultimo_resultado;
+  enum class Tela { Entrada, Simulacao, Resultados } tela = Tela::Entrada;
+  std::unique_ptr<Simulador> simulador;
+  float acumulador_tick = 0.0f;
+  bool simulacao_pausada = false;
 };

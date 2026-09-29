@@ -10,7 +10,9 @@
 #include "processo.hpp"
 
 void desenhar_painel_dados(EstadoApp &estado) {
-  ImGui::Begin("Dados de entrada");
+  ImGui::Begin("Dados de entrada", nullptr,
+               ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+                   ImGuiWindowFlags_NoCollapse);
 
   // --- Configuracao (quantum / aging) ---
   ImGui::SeparatorText("Configuracao");
@@ -85,9 +87,9 @@ void desenhar_painel_dados(EstadoApp &estado) {
 
   if (ImGui::BeginTable("tabela_processos", 5, flags)) {
     ImGui::TableSetupColumn("Id", ImGuiTableColumnFlags_WidthFixed, 40.0f);
-    ImGui::TableSetupColumn("Chegada");
-    ImGui::TableSetupColumn("Duracao");
-    ImGui::TableSetupColumn("Prioridade");
+    ImGui::TableSetupColumn("Chegada", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+    ImGui::TableSetupColumn("Duracao", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+    ImGui::TableSetupColumn("Prioridade", ImGuiTableColumnFlags_WidthStretch, 1.0f);
     ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 80.0f);
     ImGui::TableHeadersRow();
 
@@ -166,7 +168,7 @@ void desenhar_painel_dados(EstadoApp &estado) {
     ImGui::BeginDisabled();
   }
   if (ImGui::Button("Iniciar simulacao", ImVec2(-1, 40))) {
-    executar_simulacao(estado);
+    iniciar_simulacao(estado);
   }
   if (!pode_rodar) {
     ImGui::EndDisabled();
