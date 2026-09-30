@@ -1,33 +1,44 @@
 include(FetchContent)
 
-# --- Dependencias baixadas automaticamente (nao precisa instalar nada) ---
+find_package(glfw3 QUIET)
 
-set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL        OFF CACHE BOOL "" FORCE)
+if(glfw3_FOUND)
+    message(STATUS "GLFW3 encontrado no sistema.")
+    set(GLFW_TARGET glfw)
+else()
+    message(STATUS "GLFW3 nao encontrado no sistema. Baixando e compilando via FetchContent...")
+
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG 3.4
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(glfw)
+    set(GLFW_TARGET glfw)
+endif()
+
 FetchContent_Declare(
-  glfw
-  GIT_REPOSITORY https://github.com/glfw/glfw.git
-  GIT_TAG        3.4
-  GIT_SHALLOW    TRUE
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.91.9
+    GIT_SHALLOW TRUE
 )
 
 FetchContent_Declare(
-  imgui
-  GIT_REPOSITORY https://github.com/ocornut/imgui.git
-  GIT_TAG        v1.91.9
-  GIT_SHALLOW    TRUE
+    tinyfiledialogs
+    GIT_REPOSITORY https://github.com/native-toolkit/tinyfiledialogs.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
 )
 
-FetchContent_Declare(
-  tinyfiledialogs
-  GIT_REPOSITORY https://github.com/native-toolkit/tinyfiledialogs.git
-  GIT_TAG        master
-  GIT_SHALLOW    TRUE
-)
-
-FetchContent_MakeAvailable(glfw imgui tinyfiledialogs)
+FetchContent_MakeAvailable(imgui tinyfiledialogs)
 
 find_package(OpenGL REQUIRED)
 
@@ -43,7 +54,7 @@ target_include_directories(imgui_lib PUBLIC
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
-target_link_libraries(imgui_lib PUBLIC glfw OpenGL::GL)
+target_link_libraries(imgui_lib PUBLIC ${GLFW_TARGET} OpenGL::GL)
 
 add_library(tinyfd_lib STATIC
     ${tinyfiledialogs_SOURCE_DIR}/tinyfiledialogs.c
@@ -52,10 +63,6 @@ target_include_directories(tinyfd_lib PUBLIC
     ${tinyfiledialogs_SOURCE_DIR}
 )
 
-# --- Executavel da interface grafica ---
-# add_executable PRIMEIRO: o alvo "escalonador_gui" precisa existir
-# antes de qualquer target_link_libraries/target_include_directories
-# que o referencie.
 add_executable(escalonador_gui
     src/main.cpp
     src/ui_dados.cpp
@@ -70,6 +77,6 @@ target_include_directories(escalonador_gui PRIVATE
 target_link_libraries(escalonador_gui PRIVATE imgui_lib scheduler_io tinyfd_lib)
 
 if(WIN32 AND MSVC)
-  set_target_properties(escalonador_gui PROPERTIES
-      LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    set_target_properties(escalonador_gui PROPERTIES
+        LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()

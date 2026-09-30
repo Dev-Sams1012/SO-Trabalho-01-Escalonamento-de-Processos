@@ -52,9 +52,12 @@ bool Simulador::avancar_tick() {
   }
 
   const int pid_execucao = atual_ ? atual_->id : -1;
-  if (clock_ > 0 && pid_execucao != pid_execucao_anterior_) {
+
+  if (clock_ > 0 && pid_execucao_anterior_ != -1 && pid_execucao != -1 &&
+      pid_execucao != pid_execucao_anterior_) {
     resultado_.trocas_contexto++;
   }
+
   pid_execucao_anterior_ = pid_execucao;
 
   resultado_.linha_tempo.push_back({clock_, pid_execucao});
