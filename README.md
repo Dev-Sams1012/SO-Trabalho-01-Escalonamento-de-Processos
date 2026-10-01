@@ -1,5 +1,10 @@
 # Simulador de Escalonamento de Processos
 
+**Equipe:**
+- Jonathan Duarte Uchoa
+- Samuel Augusto de Abreu
+
+
 Projeto em C++20 para simular algoritmos de escalonamento de processos. A
 simulação pode ser executada pelo terminal ou acompanhada em uma interface
 gráfica.
