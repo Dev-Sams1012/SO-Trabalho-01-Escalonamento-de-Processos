@@ -2,6 +2,7 @@
 
 enum class EstadoProcesso { Novo, Pronto, Executando, Finalizado };
 
+// Reune os dados e tempos usados para acompanhar cada processo.
 struct Processo {
   int id;
   int tempo_chegada;
@@ -10,6 +11,7 @@ struct Processo {
   int prioridade;
   int prioridade_dinamica;
 
+  // Estado e medidas calculadas durante a simulacao.
   EstadoProcesso estado = EstadoProcesso::Novo;
 
   int tempo_inicio = -1;

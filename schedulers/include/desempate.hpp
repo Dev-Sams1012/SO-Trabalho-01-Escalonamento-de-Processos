@@ -8,6 +8,7 @@
 
 enum class Extremo { Minimo, Maximo };
 
+// Mantem os candidatos com o menor ou maior valor da chave escolhida.
 template <typename Chave>
 std::vector<Processo *>
 filtrar_por_extremo(const std::vector<Processo *> &candidatos, Chave chave,
@@ -35,6 +36,7 @@ filtrar_por_extremo(const std::vector<Processo *> &candidatos, Chave chave,
   return resultado;
 }
 
+// Em empate, mantem o processo atual, prioriza menor restante ou sorteia.
 inline Processo *desempatar(const std::vector<Processo *> &empatados,
                             Processo *atual) {
   if (empatados.empty()) {

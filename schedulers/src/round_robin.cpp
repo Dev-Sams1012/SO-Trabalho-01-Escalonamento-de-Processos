@@ -2,6 +2,7 @@
 
 Processo *RoundRobin::selecionarProximo(std::vector<Processo *> &fila_prontos,
                                         Processo *atual, int /*tempo_atual*/) {
+  // Quando a CPU fica livre, inicia pelo primeiro processo da fila.
   if (atual == nullptr) {
     if (fila_prontos.empty()) {
       processo_monitorado_ = nullptr;
@@ -25,6 +26,7 @@ Processo *RoundRobin::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return atual;
   }
 
+  // Ao fim do quantum, cede a CPU se houver outro processo pronto.
   if (fila_prontos.empty()) {
     ticks_no_slice_ = 0;
     return atual;

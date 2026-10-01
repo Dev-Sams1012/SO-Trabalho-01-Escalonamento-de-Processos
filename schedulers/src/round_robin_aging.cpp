@@ -6,6 +6,7 @@
 
 Processo *RoundRobinAging::escolher_por_prioridade(
     std::vector<Processo *> &fila_prontos) {
+  // Seleciona o pronto de maior prioridade dinamica.
   auto empatados = filtrar_por_extremo(
       fila_prontos, &Processo::prioridade_dinamica, Extremo::Maximo);
 
@@ -21,6 +22,7 @@ Processo *RoundRobinAging::escolher_por_prioridade(
 Processo *
 RoundRobinAging::selecionarProximo(std::vector<Processo *> &fila_prontos,
                                    Processo *atual, int /*tempo_atual*/) {
+  // Inicia a execucao pela maior prioridade quando a CPU esta livre.
   if (atual == nullptr) {
     if (fila_prontos.empty()) {
       processo_monitorado_ = nullptr;
@@ -43,6 +45,7 @@ RoundRobinAging::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return atual;
   }
 
+  // Depois do quantum, escolhe outro processo pronto pela prioridade.
   if (fila_prontos.empty()) {
     ticks_no_slice_ = 0;
     return atual;
@@ -58,6 +61,7 @@ void RoundRobinAging::onTick(std::vector<Processo *> &fila_prontos,
                              int /*tempo_atual*/) {
   ticks_desde_ultimo_envelhecimento_++;
 
+  // Aumenta a prioridade dos processos que esperam a cada quantum.
   if (ticks_desde_ultimo_envelhecimento_ < quantum_) {
     return;
   }

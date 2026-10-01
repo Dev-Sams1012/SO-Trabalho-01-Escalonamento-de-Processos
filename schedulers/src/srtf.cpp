@@ -4,6 +4,7 @@
 
 Processo *SRTF::selecionarProximo(std::vector<Processo *> &fila_prontos,
                                   Processo *atual, int /*tempo_atual*/) {
+  // Compara os prontos com o processo atual para permitir preempcao.
   std::vector<Processo *> candidatos = fila_prontos;
   if (atual != nullptr) {
     candidatos.push_back(atual);
@@ -13,6 +14,7 @@ Processo *SRTF::selecionarProximo(std::vector<Processo *> &fila_prontos,
     return nullptr;
   }
 
+  // Executa quem tem menos tempo restante.
   auto empatados = filtrar_por_extremo(candidatos, &Processo::tempo_restante,
                                        Extremo::Minimo);
   return desempatar(empatados, atual);
